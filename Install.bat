@@ -1,56 +1,58 @@
 @echo off
-chcp 65001 >nul 2>&1
 setlocal enabledelayedexpansion
-title CURE 32P Patch Installer v2.0
-
-REM ============================================================
-REM Codename CURE 32P Client Patch Installer v2.0
-REM - ASCII art (fixes Unicode encoding crash in old version)
-REM - Auto-writes setinfo cure_patched 1 into config.cfg
-REM   (autoexec.cfg is NOT executed by CURE, so we patch config.cfg)
-REM ============================================================
+title CURE 32P Patch Installer v2.2
 
 set "PATCH_DLL=%~dp0client.dll"
 set "BACKUP_NAME=client.dll.original"
 set "GAME_SUBDIR=Steam\steamapps\common\Codename CURE\cure\bin"
 
 echo +==========================================================+
-echo ^|       Codename CURE 32P Client Patch Installer v2.0      ^|
+echo ^|       Codename CURE 32P Client Patch Installer v2.2      ^|
 echo +==========================================================+
 echo ^|                                                          ^|
 echo ^|  Patches client.dll + config.cfg for 32-player mode.     ^|
-echo ^|  Ë°•‰∏ÅÂÆ¢Êà∑Á´Ø + ÈÖçÁΩÆÊñá‰ª∂, Á™ÅÁ†¥5‰∫∫ÈôêÂà∂                       ^|
+echo ^|  ≤π∂°øÕªß∂À + ≈‰÷√Œƒº˛, Õª∆∆5»Àœﬁ÷∆                       ^|
 echo ^|                                                          ^|
-echo ^|  [1] Install patch   ÂÆâË£ÖË°•‰∏Å (recommended)              ^|
-echo ^|  [2] Restore original ÊÅ¢Â§çÂéüÂßãÊñá‰ª∂                        ^|
-echo ^|  [3] Detect game path  Ê£ÄÊµãÊ∏∏ÊàèË∑ØÂæÑ                       ^|
-echo ^|  [4] Exit             ÈÄÄÂá∫                                ^|
+echo ^|  [1] Install patch   ∞≤◊∞≤π∂° (recommended)              ^|
+echo ^|  [2] Restore original ª÷∏¥‘≠ ºŒƒº˛                        ^|
+echo ^|  [3] Detect game path  ºÏ≤‚”Œœ∑¬∑æ∂                       ^|
+echo ^|  [4] Exit             ÕÀ≥ˆ                                ^|
 echo ^|                                                          ^|
 echo +==========================================================+
 echo.
 
 if not exist "%PATCH_DLL%" (
     echo [ERROR] Patch file not found: %PATCH_DLL%
+    echo [¥ÌŒÛ] ’“≤ªµΩ≤π∂°Œƒº˛: %PATCH_DLL%
     echo [HINT] Make sure client.dll is in the same folder as this script.
+    echo [Ã· æ] »∑±£ client.dll ”Î±æΩ≈±æ‘⁄Õ¨“ªƒø¬º
     echo.
     pause
     exit /b 1
 )
 
 :menu
+echo.
 echo ============================================================
-set /p "choice=Enter choice [1-4]: "
+echo  Select option / «Î—°‘Ò≤Ÿ◊˜:
+echo    [1] Install patch   ∞≤◊∞≤π∂° (recommended)
+echo    [2] Restore original ª÷∏¥‘≠ ºŒƒº˛
+echo    [3] Detect game path  ºÏ≤‚”Œœ∑¬∑æ∂
+echo    [4] Exit             ÕÀ≥ˆ
+echo ============================================================
+set /p "choice=Enter choice [1-4] / «Î ‰»Î—°œÓ [1-4]: "
 
 if "%choice%"=="1" goto install
 if "%choice%"=="2" goto restore
 if "%choice%"=="3" goto detect
 if "%choice%"=="4" exit /b 0
-echo [ERROR] Invalid choice.
+echo [ERROR] Invalid choice / Œﬁ–ß—°œÓ
 goto menu
 
 :detect
 echo.
 echo [*] Detecting game installation path...
+echo [*] ’˝‘⁄ºÏ≤‚”Œœ∑∞≤◊∞¬∑æ∂...
 set "GAME_PATH="
 
 for /f "tokens=2*" %%a in ('reg query "HKCU\Software\Valve\Steam" /v SteamPath 2^>nul') do (
@@ -61,7 +63,7 @@ if defined STEAM_PATH (
     set "CHECK_PATH=!STEAM_PATH!\!GAME_SUBDIR!"
     if exist "!CHECK_PATH!\client.dll" (
         set "GAME_PATH=!CHECK_PATH!"
-        echo [+] Found: !GAME_PATH!
+        echo [+] Found / ’“µΩ: !GAME_PATH!
         goto detected
     )
     for /f "tokens=2 delims=" %%i in ('findstr /i "path" "!STEAM_PATH!\steamapps\libraryfolders.vdf" 2^>nul') do (
@@ -72,7 +74,7 @@ if defined STEAM_PATH (
         set "CHECK_PATH=!LIB_RAW!\Steam\steamapps\common\Codename CURE\cure\bin"
         if exist "!CHECK_PATH!\client.dll" (
             set "GAME_PATH=!CHECK_PATH!"
-            echo [+] Found: !GAME_PATH!
+            echo [+] Found / ’“µΩ: !GAME_PATH!
             goto detected
         )
     )
@@ -90,24 +92,25 @@ for %%D in (
     set "CHECK_PATH=%%~D"
     if exist "!CHECK_PATH!\client.dll" (
         set "GAME_PATH=!CHECK_PATH!"
-        echo [+] Found: !GAME_PATH!
+        echo [+] Found / ’“µΩ: !GAME_PATH!
         goto detected
     )
 )
 
 echo [!] Could not auto-detect game path.
+echo [!] Œ¥ƒ‹◊‘∂ØºÏ≤‚µΩ”Œœ∑¬∑æ∂
 echo.
-set /p "GAME_PATH=Enter cure\bin folder path manually: "
+set /p "GAME_PATH=Enter cure\bin folder path / «Î ‰»Î cure\bin ƒø¬º¬∑æ∂: "
 if not exist "%GAME_PATH%\client.dll" (
-    echo [ERROR] No client.dll found at that path.
+    echo [ERROR] No client.dll found at that path / ∏√¬∑æ∂œ¬√ª”– client.dll
     echo.
     goto menu
 )
 
 :detected
 echo.
-echo [+] Game path: %GAME_PATH%
-for %%S in ("%GAME_PATH%\client.dll") do echo [+] client.dll size: %%S bytes
+echo [+] Game path / ”Œœ∑¬∑æ∂: %GAME_PATH%
+for %%S in ("%GAME_PATH%\client.dll") do echo [+] client.dll size / ¥Û–°: %%S bytes
 echo.
 goto menu
 
@@ -118,90 +121,90 @@ if not defined GAME_PATH (
     if not defined GAME_PATH goto menu
 )
 
-echo [*] Target: %GAME_PATH%
+echo [*] Target / ƒø±Í: %GAME_PATH%
 echo.
 
 tasklist /fi "imagename eq cure.exe" 2>nul | find /i "cure.exe" >nul
 if not errorlevel 1 (
     echo [ERROR] Game is running! Close CURE before patching.
+    echo [¥ÌŒÛ] ”Œœ∑’˝‘⁄‘À––! «Îœ»πÿ±’”Œœ∑
     echo.
     pause
     goto menu
 )
 
-REM --- Backup original client.dll ---
 set "BACKUP_PATH=%GAME_PATH%\%BACKUP_NAME%"
 if not exist "%BACKUP_PATH%" (
     echo [*] Backing up original client.dll...
+    echo [*] ±∏∑›‘≠ ºŒƒº˛...
     copy "%GAME_PATH%\client.dll" "%BACKUP_PATH%" >nul 2>&1
     if errorlevel 1 (
         echo [ERROR] Backup failed! Check permissions.
+        echo [¥ÌŒÛ] ±∏∑› ß∞‹! «ÎºÏ≤È»®œﬁ
         echo.
         pause
         goto menu
     )
-    echo [+] Backup created: %BACKUP_NAME%
+    echo [+] Backup created / ±∏∑›“—¥¥Ω®: %BACKUP_NAME%
 ) else (
-    echo [+] Backup already exists: %BACKUP_NAME%
+    echo [+] Backup already exists / ±∏∑›“—¥Ê‘⁄: %BACKUP_NAME%
 )
 
-REM --- Apply client.dll patch ---
 echo [*] Applying client.dll patch...
+echo [*] ”¶”√ client.dll ≤π∂°...
 copy /y "%PATCH_DLL%" "%GAME_PATH%\client.dll" >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] client.dll patch failed!
+    echo [¥ÌŒÛ] client.dll ≤π∂° ß∞‹!
     echo.
     pause
     goto menu
 )
-echo [+] client.dll patched.
+echo [+] client.dll patched / “—≤π∂°.
 
-REM --- Patch config.cfg with setinfo cure_patched 1 ---
-REM config.cfg is at cure/cfg/config.cfg (parent of bin/ + cfg/)
 set "CFG_DIR=%GAME_PATH%\..\cfg"
 set "CFG_PATH=%CFG_DIR%\config.cfg"
 
 echo [*] Patching config.cfg...
+echo [*] –ﬁ∏ƒ config.cfg...
 
-REM Check if cure_patched already exists in config.cfg
 set "ALREADY_SET=0"
 if exist "%CFG_PATH%" (
     findstr /i /c:"cure_patched" "%CFG_PATH%" >nul 2>&1
     if not errorlevel 1 (
         set "ALREADY_SET=1"
         echo [+] cure_patched already in config.cfg, skipping.
+        echo [+] cure_patched “—¥Ê‘⁄, Ã¯π˝
     )
 )
 
 if "!ALREADY_SET!"=="0" (
-    REM Create cfg dir if missing
     if not exist "%CFG_DIR%" mkdir "%CFG_DIR%" 2>nul
-
-    REM Append setinfo line (use >> to append, not overwrite)
     echo setinfo "cure_patched" "1">> "%CFG_PATH%"
     if errorlevel 1 (
         echo [WARNING] Could not write to config.cfg.
-        echo [WARNING] You must manually type in game console:
+        echo [WARNING] Œﬁ∑®–¥»Î config.cfg, «Î ÷∂Ø‘⁄øÿ÷∆Ã® ‰»Î:
         echo            setinfo cure_patched 1
     ) else (
-        echo [+] config.cfg patched with: setinfo "cure_patched" "1"
+        echo [+] config.cfg patched / “—ÃÌº”: setinfo "cure_patched" "1"
     )
 )
 
 echo.
 echo +==========================================================+
 echo ^|                  PATCH INSTALLED!                        ^|
-echo ^|                  Ë°•‰∏ÅÂÆâË£ÖÊàêÂäü!                            ^|
+echo ^|                  ≤π∂°∞≤◊∞≥…π¶!                            ^|
 echo +==========================================================+
 echo ^|                                                          ^|
-echo ^|  client.dll  - patched                                   ^|
-echo ^|  config.cfg  - cure_patched = 1 (auto-set)               ^|
+echo ^|  client.dll  - patched / “—≤π∂°                          ^|
+echo ^|  config.cfg  - cure_patched = 1 / “—◊‘∂Ø…Ë÷√             ^|
 echo ^|  backup      - %BACKUP_NAME%              ^|
 echo ^|                                                          ^|
 echo ^|  You can now join 32-player servers.                     ^|
-echo ^|  Áé∞Âú®ÂèØ‰ª•ËøûÊé•32‰∫∫ÊúçÂä°Âô®‰∫Ü„ÄÇ                               ^|
+echo ^|  œ÷‘⁄ø…“‘¡¨Ω”32»À∑˛ŒÒ∆˜¡À°£                               ^|
 echo ^|                                                          ^|
 echo ^|  To restore: run this tool, select [2].                  ^|
+echo ^|  »Á–Ëª÷∏¥: ÷ÿ–¬‘À––±æπ§æﬂ—°‘Ò [2].                       ^|
 echo ^|                                                          ^|
 echo +==========================================================+
 echo.
@@ -218,17 +221,21 @@ if not defined GAME_PATH (
 set "BACKUP_PATH=%GAME_PATH%\%BACKUP_NAME%"
 if not exist "%BACKUP_PATH%" (
     echo [ERROR] Backup not found: %BACKUP_PATH%
+    echo [¥ÌŒÛ] ’“≤ªµΩ±∏∑›Œƒº˛: %BACKUP_PATH%
     echo [HINT] Patch may not have been installed, or backup was deleted.
+    echo [Ã· æ] ø…ƒ‹…–Œ¥∞≤◊∞π˝≤π∂°, ªÚ±∏∑›“—±ª…æ≥˝
     echo.
     pause
     goto menu
 )
 
 echo [*] Restoring original client.dll...
+echo [*] ª÷∏¥‘≠ º client.dll...
 
 tasklist /fi "imagename eq cure.exe" 2>nul | find /i "cure.exe" >nul
 if not errorlevel 1 (
     echo [ERROR] Game is running! Close CURE first.
+    echo [¥ÌŒÛ] ”Œœ∑’˝‘⁄‘À––! «Îœ»πÿ±’”Œœ∑
     echo.
     pause
     goto menu
@@ -237,33 +244,35 @@ if not errorlevel 1 (
 copy /y "%BACKUP_PATH%" "%GAME_PATH%\client.dll" >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Restore failed! Check permissions.
+    echo [¥ÌŒÛ] ª÷∏¥ ß∞‹! «ÎºÏ≤È»®œﬁ
     echo.
     pause
     goto menu
 )
 
-echo [+] client.dll restored.
+echo [+] client.dll restored / “—ª÷∏¥.
 
-REM Remove cure_patched line from config.cfg
 set "CFG_PATH=%GAME_PATH%\..\cfg\config.cfg"
 if exist "%CFG_PATH%" (
     findstr /v /i /c:"cure_patched" "%CFG_PATH%" > "%CFG_PATH%.tmp" 2>nul
     if not errorlevel 1 (
         move /y "%CFG_PATH%.tmp" "%CFG_PATH%" >nul 2>&1
         echo [+] cure_patched removed from config.cfg.
+        echo [+] “—¥” config.cfg “∆≥˝ cure_patched
     )
 )
 
 echo.
 echo +==========================================================+
 echo ^|                  ORIGINAL RESTORED                       ^|
-echo ^|                  Â∑≤ÊÅ¢Â§çÂéüÂßãÊñá‰ª∂                           ^|
+echo ^|                  “—ª÷∏¥‘≠ ºŒƒº˛                           ^|
 echo +==========================================================+
 echo ^|                                                          ^|
 echo ^|  client.dll restored to original.                        ^|
 echo ^|  config.cfg cure_patched line removed.                   ^|
 echo ^|                                                          ^|
 echo ^|  You can now only connect to 5-player servers.           ^|
+echo ^|  œ÷‘⁄÷ªƒ‹¡¨Ω”5»À∑˛ŒÒ∆˜                                    ^|
 echo ^|                                                          ^|
 echo +==========================================================+
 echo.
